@@ -13,7 +13,6 @@ A minimal, fully-typed Python project template wired up with the
 ```
 .
 ├── pyproject.toml          # project metadata + tool config (ruff, ty, pytest)
-├── Makefile                # shortcuts for common tasks
 ├── src/
 │   └── base_python_project/
 │       ├── __init__.py
