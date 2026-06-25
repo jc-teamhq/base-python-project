@@ -40,16 +40,6 @@ commands with `uv run`.
 
 ## Common tasks
 
-| Command            | What it does                          |
-| ------------------ | ------------------------------------- |
-| `make lint`        | `ruff check` — lint                   |
-| `make format`      | `ruff format` — auto-format           |
-| `make typecheck`   | `ty check` — type check               |
-| `make test`        | `pytest`                              |
-| `make check`       | lint + format-check + typecheck + test|
-
-Or run the tools directly:
-
 ```bash
 uv run ruff check .
 uv run ruff format .
