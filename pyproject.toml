@@ -4,7 +4,20 @@ version = "0.1.0"
 description = "A minimal, fully-typed Python project using uv, ruff, and ty."
 readme = "README.md"
 requires-python = ">=3.12"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "John Choi", email = "john@teamhq.com.au" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
 dependencies = []
+
+[project.urls]
+Repository = "https://github.com/johnchoi/base-python-project"
+Issues = "https://github.com/johnchoi/base-python-project/issues"
 
 [build-system]
 requires = ["uv_build>=0.11.7,<0.12.0"]
@@ -17,8 +30,11 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
+    "pytest-cov>=7.0.0",
     "ruff>=0.15.19",
     "ty>=0.0.53",
+    "taskipy>=1.14.1",
+    "nox>=2025.5.1",
 ]
 
 # ---------------------------------------------------------------------------
@@ -32,22 +48,23 @@ src = ["src", "tests"]
 [tool.ruff.lint]
 # A pragmatic default rule set. Add/remove codes to taste.
 select = [
-    "E",    # pycodestyle errors
-    "W",    # pycodestyle warnings
-    "F",    # pyflakes
-    "I",    # isort (import sorting)
-    "N",    # pep8-naming
-    "UP",   # pyupgrade
     "B",    # flake8-bugbear
     "C4",   # flake8-comprehensions
-    "SIM",  # flake8-simplify
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "G",    # flak8-logging-format
+    "I",    # isort (import sorting)
+    "N",    # pep8-naming
+    "PT",   # pytest-unittest-assertion
     "RUF",  # ruff-specific rules
+    "SIM",  # flake8-simplify
+    "T20",  # flak8-print
+    "UP",   # pyupgrade
+    "W",    # pycodestyle warnings
 ]
 ignore = []
 
 [tool.ruff.lint.per-file-ignores]
-# Tests may use assert and don't need full docstring coverage.
-"tests/**/*.py" = ["S101"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -72,8 +89,30 @@ possibly-unresolved-reference = "error"
 unused-ignore-comment = "warn"
 
 # ---------------------------------------------------------------------------
+# taskipy: task runner (`uv run task <name>`)
+# ---------------------------------------------------------------------------
+[tool.taskipy.tasks]
+lint = "ruff check ."
+format = "ruff format ."
+typecheck = "ty check"
+test = "pytest"
+# Everything CI would run, in one command.
+check = "ruff check . && ruff format --check . && ty check && pytest"
+
+# ---------------------------------------------------------------------------
 # pytest
 # ---------------------------------------------------------------------------
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
+addopts = "-ra --cov=base_python_project --cov-report=term-missing"
+
+# ---------------------------------------------------------------------------
+# coverage.py (driven by pytest-cov)
+# ---------------------------------------------------------------------------
+[tool.coverage.run]
+source = ["base_python_project"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_also = ["if __name__ == .__main__.:"]
