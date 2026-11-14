@@ -32,6 +32,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pre-commit>=4.7.0",
+    "pre-commit-hooks>=6.0.0",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
     "ruff>=0.15.19",
@@ -65,13 +66,25 @@ select = [
     "RET",  # flake8-return
     "SIM",  # flake8-simplify
     "PTH",  # flake8-use-pathlib
+    "A",    # flake8-builtins (don't shadow builtins)
+    "ARG",  # flake8-unused-arguments
+    "DTZ",  # flake8-datetimez (timezone-aware datetimes)
+    "ERA",  # eradicate (commented-out code)
+    "FURB", # refurb (modern idioms)
+    "PERF", # perflint (performance anti-patterns)
+    "PGH",  # pygrep-hooks (blanket noqa / type: ignore)
+    "PIE",  # flake8-pie
+    "PL",   # pylint
+    "TC",   # flake8-type-checking (typing-only imports)
+    "TRY",  # tryceratops (exception handling)
     "RUF",  # ruff-specific rules
 ]
 ignore = []
 
 [tool.ruff.lint.per-file-ignores]
-# Tests may use assert and don't need docstrings.
-"tests/**/*.py" = ["S101", "D"]
+# Tests may use assert, don't need docstrings, and compare against literal
+# expected values.
+"tests/**/*.py" = ["S101", "D", "PLR2004"]
 # The CLI entry point is allowed to print.
 "src/base_python_project/__main__.py" = ["T201"]
 
@@ -112,7 +125,9 @@ error-on-warning = true
 testpaths = ["tests"]
 # Coverage is opt-in (`pytest --cov`) rather than in addopts, so running a
 # subset of tests doesn't trip the `fail_under` threshold below.
-addopts = ["-ra"]
+# importlib mode is pytest's recommendation for new projects: test modules
+# need no `__init__.py` and nothing is inserted into sys.path.
+addopts = ["-ra", "--import-mode=importlib"]
 # Enables strict_config, strict_markers, strict_xfail and
 # strict_parametrization_ids.
 strict = true

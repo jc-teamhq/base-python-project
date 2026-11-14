@@ -14,5 +14,13 @@ def greet(name: str) -> str:
 
 
 def add(a: int, b: int) -> int:
-    """Add two integers together."""
+    """Add two integers together.
+
+    Args:
+        a: The first addend.
+        b: The second addend.
+
+    Returns:
+        The sum of `a` and `b`.
+    """
     return a + b

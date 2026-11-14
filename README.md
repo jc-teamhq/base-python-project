@@ -13,10 +13,14 @@ A minimal, fully-typed Python project template wired up with the
 
 ```
 .
-├── .pre-commit-config.yaml # lint/format/type-check hooks (also used by CI)
+├── .gitignore
+├── .pre-commit-config.yaml # file hygiene + lint/format/type-check hooks (also used by CI)
 ├── .python-version         # dev interpreter, pinned to the minimum supported (3.12)
+├── LICENSE
 ├── pyproject.toml          # project metadata + tool config (ruff, ty, pytest, coverage)
 ├── uv.lock                 # locked dependency versions (commit this)
+├── scripts/
+│   └── ci.sh               # everything CI runs; also runnable locally
 ├── src/
 │   └── base_python_project/
 │       ├── __init__.py
@@ -53,6 +57,8 @@ uv run ruff format .
 uv run ty check                     # warnings fail too (set in pyproject.toml)
 uv run pytest                       # tests only; pass a path or -k to run a subset
 uv run pytest --cov                 # tests + coverage (fails below 90%)
+uv audit                            # check uv.lock for known vulnerabilities
+scripts/ci.sh                       # everything CI runs (see below)
 ```
 
 ## Continuous integration
@@ -60,18 +66,25 @@ uv run pytest --cov                 # tests + coverage (fails below 90%)
 The checks live in the repo, not in any CI provider's config, so any CI
 system (GitLab CI, Bitbucket Pipelines, Forgejo/Gitea Actions, Jenkins, …)
 only needs [uv](https://docs.astral.sh/uv/getting-started/installation/)
-installed and these commands:
+installed and to run:
 
 ```bash
-uv sync --locked
-uv run pre-commit run --all-files
-uv run --isolated --python 3.12 pytest --cov   # repeat for each supported version:
-uv run --isolated --python 3.13 pytest --cov   # 3.12 is the minimum (`requires-python`)
-uv run --isolated --python 3.14 pytest --cov
+scripts/ci.sh
 ```
 
-`--isolated` runs the tests in a throwaway environment for that interpreter,
-so the project `.venv` is left untouched.
+The script runs, in order:
+
+1. `uv sync --locked` — fails if `uv.lock` is out of date
+2. `pre-commit run --all-files` — file hygiene, lockfile, lint, format, types
+3. `pytest --cov` on every supported Python version (3.12, 3.13, 3.14), each
+   in a throwaway `--isolated` environment so `.venv` is left untouched
+4. `uv audit` — checks the locked dependencies against the
+   [OSV](https://osv.dev) vulnerability database (needs network access;
+   `uv audit` is still marked experimental by uv)
+
+When adding or dropping a Python version, update the list at the top of
+`scripts/ci.sh` along with `requires-python` and the classifiers in
+`pyproject.toml`.
 
 ## Managing dependencies
 

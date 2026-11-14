@@ -2,7 +2,7 @@
 
 from importlib.metadata import version
 
-from base_python_project.core import greet
+from base_python_project.core import add, greet
 
-__all__ = ["greet"]
+__all__ = ["add", "greet"]
 __version__ = version("base-python-project")
