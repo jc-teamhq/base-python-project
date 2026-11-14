@@ -36,6 +36,7 @@ rather than the working directory, catching packaging mistakes early.
 uv sync                         # create .venv and install everything (incl. dev tools)
 uv run pre-commit install       # run the checks automatically on every commit
 uv run base-python-project      # -> Hello, world!  (or: uv run python -m base_python_project)
+uv run base-python-project --name Ada   # -> Hello, Ada!  (see --help, --version)
 ```
 
 `uv sync` reads `pyproject.toml` + `uv.lock` and builds a reproducible
@@ -48,8 +49,9 @@ commands with `uv run`.
 uv run pre-commit run --all-files   # all static checks: lock, lint, format, types
 uv run ruff check .
 uv run ruff format .
-uv run ty check
-uv run pytest                       # tests + coverage (fails below 90%)
+uv run ty check                     # warnings fail too (set in pyproject.toml)
+uv run pytest                       # tests only; pass a path or -k to run a subset
+uv run pytest --cov                 # tests + coverage (fails below 90%)
 ```
 
 ## Continuous integration
@@ -62,9 +64,9 @@ installed and these commands:
 ```bash
 uv sync --locked
 uv run pre-commit run --all-files
-uv run --isolated --python 3.12 pytest   # repeat for each supported version:
-uv run --isolated --python 3.13 pytest   # 3.12 is the minimum (`requires-python`)
-uv run --isolated --python 3.14 pytest
+uv run --isolated --python 3.12 pytest --cov   # repeat for each supported version:
+uv run --isolated --python 3.13 pytest --cov   # 3.12 is the minimum (`requires-python`)
+uv run --isolated --python 3.14 pytest --cov
 ```
 
 `--isolated` runs the tests in a throwaway environment for that interpreter,
@@ -84,7 +86,7 @@ uv lock --upgrade          # refresh the lockfile
 All tool configuration lives in `pyproject.toml`:
 
 - `[tool.ruff]` / `[tool.ruff.lint]` / `[tool.ruff.format]`
-- `[tool.ty.environment]` / `[tool.ty.src]` / `[tool.ty.rules]`
+- `[tool.ty.environment]` / `[tool.ty.src]` / `[tool.ty.rules]` / `[tool.ty.terminal]`
 - `[tool.pytest]` (pytest's native TOML config, with `strict = true`)
 - `[tool.coverage.run]` / `[tool.coverage.report]`
 

@@ -22,7 +22,7 @@ dependencies = []
 base-python-project = "base_python_project.__main__:main"
 
 [build-system]
-requires = ["uv_build>=0.11.7,<0.12.0"]
+requires = ["uv_build>=0.13.4,<0.14.0"]
 build-backend = "uv_build"
 
 # ---------------------------------------------------------------------------
@@ -96,17 +96,23 @@ include = ["src", "tests"]
 
 [tool.ty.rules]
 # Surface common mistakes as errors. See `ty check --help` and the docs
-# for the full rule list; tune these to your team's tolerance. Run with
-# `--error-on-warning` (as pre-commit does) so warnings also fail.
+# for the full rule list; tune these to your team's tolerance.
 possibly-unresolved-reference = "error"
 unused-ignore-comment = "warn"
+
+[tool.ty.terminal]
+# Fail on warnings too, so `ty check` behaves the same everywhere it runs
+# (by hand, in pre-commit, in CI) without anyone remembering a flag.
+error-on-warning = true
 
 # ---------------------------------------------------------------------------
 # pytest (native TOML config, pytest >= 9)
 # ---------------------------------------------------------------------------
 [tool.pytest]
 testpaths = ["tests"]
-addopts = ["-ra", "--cov"]
+# Coverage is opt-in (`pytest --cov`) rather than in addopts, so running a
+# subset of tests doesn't trip the `fail_under` threshold below.
+addopts = ["-ra"]
 # Enables strict_config, strict_markers, strict_xfail and
 # strict_parametrization_ids.
 strict = true
@@ -120,6 +126,7 @@ source_pkgs = ["base_python_project"]
 branch = true
 
 [tool.coverage.report]
+# Enforced whenever coverage is collected (`pytest --cov`), e.g. in CI.
 fail_under = 90
 show_missing = true
 skip_covered = true
