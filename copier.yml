@@ -1,0 +1,56 @@
+# Copier template configuration (https://copier.readthedocs.io/).
+#
+#   uvx copier copy <path-or-git-url-of-this-repo> my-project
+#
+# Generated projects record their answers in .copier-answers.yml, so they can
+# later pull in template changes with `uvx copier update`.
+
+_subdirectory: template
+_min_copier_version: "9.19"
+
+project_name:
+  type: str
+  help: Project name (distribution name on PyPI and the command name, e.g. my-project)
+  validator: >-
+    {% if not (project_name | regex_search('^[a-z][a-z0-9]*(-[a-z0-9]+)*$')) %}
+    Use lowercase letters, digits and single hyphens, starting with a letter.
+    {% endif %}
+
+package_name:
+  type: str
+  help: Importable Python package name
+  default: "{{ project_name | replace('-', '_') }}"
+  validator: >-
+    {% if not (package_name | regex_search('^[a-z][a-z0-9_]*$')) %}
+    Use lowercase letters, digits and underscores, starting with a letter.
+    {% endif %}
+
+description:
+  type: str
+  help: One-line description
+  default: A minimal, fully-typed Python project.
+
+author_name:
+  type: str
+  help: Author name (for pyproject.toml and the copyright notice)
+  validator: "{% if not author_name.strip() %}Required.{% endif %}"
+
+license:
+  type: str
+  help: License for the generated project
+  default: GPL-3.0-or-later
+  choices:
+    GPL-3.0-or-later: GPL-3.0-or-later
+    GPL-3.0-only: GPL-3.0-only
+    MIT: MIT
+    Apache-2.0: Apache-2.0
+    Proprietary (no license file; blocks uploads to PyPI): Proprietary
+
+_message_after_copy: |
+  Created {{ project_name }}. Next steps:
+
+    cd {{ _copier_conf.dst_path }}
+    git init
+    uv sync                      # creates .venv and uv.lock (commit uv.lock)
+    uv run pre-commit install
+    scripts/ci.sh                # everything CI runs

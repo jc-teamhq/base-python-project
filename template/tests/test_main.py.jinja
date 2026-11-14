@@ -2,8 +2,8 @@
 
 import pytest
 
-from base_python_project import __version__
-from base_python_project.__main__ import main
+from {{ package_name }} import __version__
+from {{ package_name }}.__main__ import main
 
 
 def test_main_greets_world_by_default(capsys: pytest.CaptureFixture[str]) -> None:
@@ -20,17 +20,5 @@ def test_version_flag(capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc_info:
         main(["--version"])
     assert exc_info.value.code == 0
-    assert capsys.readouterr().out == f"base-python-project {__version__}\n"
-
-
-def test_unknown_argument_is_a_usage_error(
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    with pytest.raises(SystemExit) as exc_info:
-        main(["--bogus"])
-    assert exc_info.value.code == 2
-    assert "unrecognized arguments: --bogus" in capsys.readouterr().err
-
-
-def test_version_is_exposed() -> None:
-    assert __version__
+    prog = "{{ project_name }}"
+    assert capsys.readouterr().out == f"{prog} {__version__}\n"

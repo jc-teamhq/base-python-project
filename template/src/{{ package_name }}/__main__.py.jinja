@@ -1,10 +1,10 @@
-"""Command-line entry point, run as `base-python-project` or `python -m ...`."""
+"""Command-line entry point; also runnable with `python -m`."""
 
 import argparse
 from collections.abc import Sequence
 
-from base_python_project import __version__
-from base_python_project.core import greet
+from {{ package_name }} import __version__
+from {{ package_name }}.core import greet
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -14,7 +14,7 @@ def build_parser() -> argparse.ArgumentParser:
         The configured parser.
     """
     parser = argparse.ArgumentParser(
-        prog="base-python-project",
+        prog="{{ project_name }}",
         description="Print a friendly greeting.",
     )
     parser.add_argument(

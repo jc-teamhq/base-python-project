@@ -1,8 +1,0 @@
-"""base-python-project: a minimal, typed Python project template."""
-
-from importlib.metadata import version
-
-from base_python_project.core import add, greet
-
-__all__ = ["add", "greet"]
-__version__ = version("base-python-project")
