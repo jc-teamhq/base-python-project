@@ -3,10 +3,15 @@
 from base_python_project.core import greet
 
 
-def main() -> None:
-    """Run the application."""
+def main() -> int:
+    """Run the application.
+
+    Returns:
+        The process exit code.
+    """
     print(greet("world"))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

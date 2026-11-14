@@ -1,0 +1,35 @@
+# Static checks, run on every commit (after `uv run pre-commit install`) and
+# in CI via `uv run pre-commit run --all-files`.
+#
+# Every hook runs the tool from the project's locked environment via `uv run`,
+# so tool versions come from uv.lock alone and are never duplicated here.
+repos:
+  - repo: local
+    hooks:
+      - id: uv-lock
+        name: uv lock --check
+        entry: uv lock --check
+        language: system
+        files: ^(pyproject\.toml|uv\.lock)$
+        pass_filenames: false
+
+      - id: ruff-check
+        name: ruff check
+        entry: uv run --locked ruff check --fix --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      - id: ruff-format
+        name: ruff format
+        entry: uv run --locked ruff format --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      - id: ty
+        name: ty check
+        entry: uv run --locked ty check --error-on-warning
+        language: system
+        types_or: [python, pyi]
+        pass_filenames: false
