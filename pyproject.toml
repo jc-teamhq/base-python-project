@@ -5,8 +5,8 @@ description = "A minimal, fully-typed Python project using uv, ruff, and ty."
 readme = "README.md"
 requires-python = ">=3.12"
 authors = [{ name = "John Choi" }]
-# PEP 639. Add an SPDX `license = "..."` expression once the exact terms
-# (e.g. GPL-3.0-only vs GPL-3.0-or-later) are decided.
+# PEP 639 SPDX license expression; the full text is in LICENSE.
+license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 classifiers = [
     "Programming Language :: Python :: 3",
