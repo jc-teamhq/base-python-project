@@ -14,6 +14,7 @@ A minimal, fully-typed Python project template wired up with the
 ```
 .
 ├── .pre-commit-config.yaml # lint/format/type-check hooks (also used by CI)
+├── .python-version         # dev interpreter, pinned to the minimum supported (3.12)
 ├── pyproject.toml          # project metadata + tool config (ruff, ty, pytest, coverage)
 ├── uv.lock                 # locked dependency versions (commit this)
 ├── src/
